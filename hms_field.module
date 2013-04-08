@@ -39,6 +39,7 @@ function hms_field_field_info() {
       'instance_settings' => array('format' => 'h:mm', 'default_description' => 1),
       'default_widget' => 'hms_default_widget',
       'default_formatter' => 'hms_default_formatter',
+      'field item class' => 'Drupal\hms_field\Type\HMSFieldItem',
     ),
   );
 }
@@ -46,7 +47,7 @@ function hms_field_field_info() {
 /**
  * Implements hook_field_instance_settings_form().
  */
-function hms_field_field_instance_settings_form($field, $instance) {
+function hms_field_field_instance_settings_form($field, $instance, $form_state) {
   return array(
     'format' => array(
       '#type' => 'select',
@@ -362,12 +363,27 @@ function theme_hms_natural_language($variables) {
  * HMS form element validator.
  */
 function _hms_validate_form_element($element, &$form_state, $form) {
-  $form_input = drupal_array_get_nested_value($form_state['input'], $element['#array_parents']);
+  $form_input = _hms_array_get_nested_value($form_state['input'], $element['#array_parents']);
   if (_hms_formatted_to_seconds($form_input, $element['#format']) === FALSE) {
     form_error($element, t('@title field cannot be parsed. Please use format \'%format\'.', array('@title' => $element['#title'], '%format' => $element['#format'])));
   }
 }
 
+function _hms_array_get_nested_value(array &$array, array $parents, &$key_exists = NULL) {
+  $ref = &$array;
+  foreach ($parents as $parent) {
+    if (is_array($ref) && array_key_exists($parent, $ref)) {
+      $ref = &$ref[$parent];
+    }
+    else {
+      $key_exists = FALSE;
+      $null = NULL;
+      return $null;
+    }
+  }
+  $key_exists = TRUE;
+  return $ref;
+}
 
 /**
 * Returns possible format options.
