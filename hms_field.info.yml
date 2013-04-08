@@ -1,0 +1,7 @@
+name: HMS Field
+description: Provides a field for Hours Minutes and Seconds stored as seconds.
+package: Fields
+core: 8.x
+
+dependencies:
+  - field

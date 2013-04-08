@@ -1,7 +1,0 @@
-name = HMS Field
-description = "Provides a field for Hours Minutes and Seconds stored as seconds."
-package = Fields
-core = 7.x
-
-dependencies[] = field
-files[] = hms_field.migrate.inc
