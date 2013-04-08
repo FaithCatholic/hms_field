@@ -1,4 +1,5 @@
 name: HMS Field
+<<<<<<< HEAD
 description: 'Provides a field for Hours Minutes and Seconds stored as seconds.'
 package: Fields
 core: 8.x
@@ -6,3 +7,11 @@ dependencies:
   -field
 files:
   - hms_field.migrate.inc
+=======
+description: Provides a field for Hours Minutes and Seconds stored as seconds.
+package: Fields
+core: 8.x
+
+dependencies:
+  - field
+>>>>>>> 8d8082bd5e3136722458f935c4c6ca750d32bdef
