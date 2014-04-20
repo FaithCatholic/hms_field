@@ -14,11 +14,11 @@ function hms_field_element_info() {
       '#size' => 8,
       '#maxlength' => 16,
       '#default_value' => NULL,
-      '#autocomplete_path' => FALSE,
-      '#process' => array('ajax_process_form'),
-      '#theme' => 'textfield',
+      '#autocomplete_route_name' => FALSE,
+      '#process' => array('form_process_autocomplete', 'ajax_process_form', 'form_process_pattern', 'form_process_group'),
+      '#theme' => 'input__textfield',
       '#theme_wrappers' => array('form_element'),
-      '#pre_render' => array('_hms_pre_render_form_element'),
+      '#pre_render' => array('_hms_pre_render_form_element', 'form_pre_render_textfield', 'form_pre_render_group'),
       '#value_callback' => '_hms_value_callback',
       '#format' => 'h:mm:ss',
       '#element_validate' => array('_hms_validate_form_element'),
@@ -362,10 +362,10 @@ function theme_hms_natural_language($variables) {
 /**
  * HMS form element validator.
  */
-function _hms_validate_form_element($element, &$form_state, $form) {
+function _hms_validate_form_element(&$element, &$form_state) {
   $form_input = _hms_array_get_nested_value($form_state['input'], $element['#array_parents']);
   if (_hms_formatted_to_seconds($form_input, $element['#format']) === FALSE) {
-    form_error($element, t('@title field cannot be parsed. Please use format \'%format\'.', array('@title' => $element['#title'], '%format' => $element['#format'])));
+    form_error($element, $form_state, t('@title field cannot be parsed. Please use format \'%format\'.', array('@title' => $element['#title'], '%format' => $element['#format'])));
   }
 }
 
