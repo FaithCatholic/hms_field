@@ -308,7 +308,6 @@ function theme_hms($variables) {
     if ($offset) {
       $value = (REQUEST_TIME - $variables['running_since']) + $offset;
     }
-    _hms_add_running_js();
   }
   $html = '<span class="' . implode(' ' , $classes) . '">';
   $html .= _hms_seconds_to_formatted($value, $variables['format'], $variables['leading_zero']);
@@ -316,6 +315,16 @@ function theme_hms($variables) {
   return $html;
 }
 
+/**
+ * Preprocess theme hms.
+ *
+ * Attach JS when needed.
+ */
+function template_preprocess_hms(&$variables) {
+  if ($variables['running_since'] !== 0) {
+    _hms_add_running_js();
+  }
+}
 /**
  * Theme hms_natural_language
  *
@@ -601,6 +610,6 @@ function _hms_add_running_js() {
     return;
   }
   $hms_running_js_added = TRUE;
-  drupal_add_js(drupal_get_path('module', 'hms_field') . '/hms_field.js');
-  drupal_add_js(array('hms_field' => array('servertime' => REQUEST_TIME, 'factor_map' => _hms_factor_map())), 'setting');
+  _drupal_add_js(drupal_get_path('module', 'hms_field') . '/hms_field.js');
+  _drupal_add_js(array('hms_field' => array('servertime' => REQUEST_TIME, 'factor_map' => _hms_factor_map())), 'setting');
 }

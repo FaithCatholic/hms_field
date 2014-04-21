@@ -20,13 +20,13 @@ var hms_seconds_to_formatted = function(seconds, format, leading_zero) {
     left_over = Math.abs(left_over);
   }
 
-  for(key in Drupal.settings.hms_field.factor_map) {
+  for(key in drupalSettings.hms_field.factor_map) {
     if (left_over == 0) {
       values[key] = 0;
       continue;
     }
-    values[key] = Math.floor(left_over / parseInt(Drupal.settings.hms_field.factor_map[key]));
-    left_over = left_over - parseInt(values[key] * parseInt(Drupal.settings.hms_field.factor_map[key]));
+    values[key] = Math.floor(left_over / parseInt(drupalSettings.hms_field.factor_map[key]));
+    left_over = left_over - parseInt(values[key] * parseInt(drupalSettings.hms_field.factor_map[key]));
   }
   format = format.split(':');
   for(letter in format) {
@@ -62,7 +62,7 @@ var hms_update_field = function(element) {
   var leading_zero = true;
   var format = 'h:mm';
   var offset = 0;
-  var since = Drupal.settings.hms_field.servertime;
+  var since = drupalSettings.hms_field.servertime;
   var current = unixtimestamp() + hms_tick_difference;
   var seconds = 0;
 
