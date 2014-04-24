@@ -5,5 +5,3 @@ package: Field types
 core: 8.x
 dependencies:
   -field
-files:
-  - hms_field.migrate.inc
