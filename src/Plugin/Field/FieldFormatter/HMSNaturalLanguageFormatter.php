@@ -2,47 +2,79 @@
 
 /**
  * @file
- * Contains \Drupal\hms_field\Plugin\field\formatter\HMSNaturalLanguageFormatter.
+ * Contains \Drupal\hms_field\Plugin\Field\FieldFormatter\HMSNaturalLanguageFormatter.
  */
 
 namespace Drupal\hms_field\Plugin\Field\FieldFormatter;
 
+use Drupal\Component\Utility\SafeMarkup;
+use Drupal\Core\Field\FieldDefinitionInterface;
+use Drupal\Core\Field\FieldItemInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\FormatterBase;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\hms_field\HMSServiceInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Plugin implementation of the 'hms_natural_language_formatter' formatter.
  *
  * @FieldFormatter(
  *   id = "hms_natural_language_formatter",
- *   label = @Translation("HMS Natural language"),
+ *   label = @Translation("Natural language"),
  *   field_types = {
  *     "hms"
- *   },
- *   settings = {
- *     "display_formats" = {
- *       "w",
- *       "d",
- *       "h",
- *       "m",
- *       "s"
- *     },
- *     "separator" = ", ",
- *     "last_separator" = " and "
  *   }
  * )
  */
-class HMSNaturalLanguageFormatter extends FormatterBase {
+class HMSNaturalLanguageFormatter extends FormatterBase implements ContainerFactoryPluginInterface {
+
+  /**
+   * Constructor
+   */
+  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, $label, $view_mode, array $third_party_settings, HMSServiceInterface $hms_service) {
+    parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $label, $view_mode, $third_party_settings);
+
+    $this->hms_service = $hms_service;
+  }
 
   /**
    * {@inheritdoc}
    */
-  public function settingsForm(array $form, array &$form_state) {
-    $elements = array();
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $plugin_id,
+      $plugin_definition,
+      $configuration['field_definition'],
+      $configuration['settings'],
+      $configuration['label'],
+      $configuration['view_mode'],
+      $configuration['third_party_settings'],
+      $container->get('hms_field.hms')
+    );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function defaultSettings() {
+    return array(
+      'display_formats' => array("w", "d", "h", "m", "s"),
+      'separator' => ", ",
+      "last_separator" => " and ",
+    ) + parent::defaultSettings();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function settingsForm(array $form, FormStateInterface $form_state) {
+    $elements = parent::settingsForm($form, $form_state);
 
     $options = array();
-    $factors = _hms_factor_map(TRUE);
-    $order = _hms_factor_map();
+    $factors = $this->hms_service->factor_map(TRUE);
+    $order = $this->hms_service->factor_map();
     arsort($order, SORT_NUMERIC);
     foreach ($order as $factor => $info) {
       $options[$factor] = t($factors[$factor]['label multiple']);
@@ -78,7 +110,7 @@ class HMSNaturalLanguageFormatter extends FormatterBase {
   public function settingsSummary() {
     $summary = array();
 
-    $factors = _hms_factor_map(TRUE);
+    $factors = $this->hms_service->factor_map(TRUE);
     $fragments = $this->getSetting('display_formats');
     $fragment_list = array();
     foreach ($fragments as $fragment) {
@@ -98,7 +130,7 @@ class HMSNaturalLanguageFormatter extends FormatterBase {
   /**
    * {@inheritdoc}
    */
-  public function viewElements(FieldItemListInterface $items) {
+  public function viewElements(FieldItemListInterface $items, $langcode) {
     $element = array();
 
     foreach ($items as $delta => $item) {
@@ -111,7 +143,7 @@ class HMSNaturalLanguageFormatter extends FormatterBase {
         }
       }
       if (!strlen($element[$delta]['#format'])) {
-        $element[$delta]['#format'] = implode(':', array_keys(_hms_factor_map(TRUE)));
+        $element[$delta]['#format'] = implode(':', array_keys($this->hms_service->factor_map(TRUE)));
       }
       else {
         $element[$delta]['#format'] = substr($element[$delta]['#format'], 1);
@@ -123,4 +155,3 @@ class HMSNaturalLanguageFormatter extends FormatterBase {
     return $element;
   }
 }
-
