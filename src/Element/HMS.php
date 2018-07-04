@@ -59,12 +59,12 @@ class HMS extends FormElement {
     $value = trim($element['#value']);
 
     $form_state->setValueForElement($element, $value);
-    if ($value !== '' && !\Drupal::service('hms_field.hms')->isValid($value, $element['#format'])) {
+    if ($value !== '' && !\Drupal::service('hms_field.hms')->isValid($value, $element['#format'], $element, $form_state)) {
       $form_state->setError($element, t('Please enter a correct hms value in format %format.', array('%format' => $element['#format'])));
     } else {
       // Format given value to seconds if input is valid.
       $seconds = \Drupal::service('hms_field.hms')
-        ->formatted_to_seconds($value, $element['#format']);
+        ->formatted_to_seconds($value, $element['#format'], $element, $form_state);
       $form_state->setValueForElement($element, $seconds);
     }
   }

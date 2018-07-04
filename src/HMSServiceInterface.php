@@ -56,7 +56,7 @@ interface HMSServiceInterface {
    * @param string $format
    * @return mixed
    */
-  public function formatted_to_seconds($str, $format = 'h:m:s');
+  public function formatted_to_seconds($str, $format = 'h:m:s', $element = [], $form_state = []);
 
   /**
    * Returns a formatted string form the number of seconds.
@@ -76,7 +76,7 @@ interface HMSServiceInterface {
    *
    * @return boolean
    */
-  public function isValid($input, $format);
+  public function isValid($input, $format, $element = [], $form_state = []);
 
   /**
    * Helper to normalize format.
