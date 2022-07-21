@@ -1,0 +1,9 @@
+{
+  "name": "faithcatholic/hms_field",
+  "type": "drupal-module",
+  "description": "HMS Field displays an integer formatted as Hours, Minutes or Seconds.",
+  "keywords": ["Drupal"],
+  "license": "GPL-2.0+",
+  "minimum-stability": "dev",
+  "require": { }
+}
